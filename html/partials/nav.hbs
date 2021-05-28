@@ -1,0 +1,18 @@
+<header>
+   <nav>
+      <ul>
+         {{#if isAuth}}
+            <li><a href="/account" >Аккаунт</a></li>
+            <li><a href="/">Главная</a></li>
+            <li><a href="/list">Рандомное</a></li>
+            <li><a href="/random">Все аниме</a></li>
+            <li><a href="/auth/logout">Выйти</a></li>
+         {{else}}
+            <li><a href="/">Главная</a></li>
+            <li><a href="/list">Рандомное</a></li>
+            <li><a href="/random">Все аниме</a></li>
+            <li><a href="/auth/login">Войти</a></li>
+         {{/if}}
+      </ul>
+   </nav>
+</header>

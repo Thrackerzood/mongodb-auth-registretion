@@ -1,0 +1,29 @@
+<main class="login_main">
+   <section class="content">
+      <div class="tab_panel">
+         <a class="login">
+            <p>ВХОД</p>
+         </a>
+         <a class="registration">
+            <p>РЕГИСТРАЦИЯ</p>
+         </a>
+      </div>
+      <div id="login" class="login_tab">
+            <form action="/auth/login" method="POST">
+               <input id="login_input" type="login" placeholder="login" name="login" required>
+               <input id="password" type="password" placeholder="password" name="password" required>
+               <button class="btn" type="submit">ВОЙТИ</button>
+            </form>
+      </div>
+      <div id="registration" class="registration_tab">
+            <form action="/auth/register" method="POST">
+               <input id="login_input" type="login" placeholder="login" name="login" required>
+               <input id="email" type="email" placeholder="email" name="email" required>
+               <input id="password" type="password" placeholder="password" name="password" required>
+               <input id="confirm" type="password" placeholder="confirm password" name="confirm" required>
+               <button class="btn" type="submit">РЕГИСТРАЦИЯ</button>
+            </form>
+      </div>
+   </section>
+</main>
+<script src="../auth.js" defer></script>

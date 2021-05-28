@@ -1,0 +1,34 @@
+<main class="anime">
+   <section class="section_content-anime">
+      {{#each anime}}
+      <section class="sub-section_content-anime">
+         <section class="section_anime">
+            <img class="section_anime-img-anime" src="../{{this.picture_id}}">
+            <p class="section_anime-title-anime">{{this.show_name}}</p>
+            <p class="section_anime-paragraph-anime">{{this.title}}</p>
+            <p class="section_anime-sound-anime">Перевод: {{this.audio_id}}</p>
+            <p class="section_anime-series-anime">Количество серий: {{this.series}}</p>
+         </section>
+      </section>
+      {{/each}}
+            <div class="section-video">
+               <video class="section_anime-video-anime" id="video" src="" controls></video>
+                  <select class="select">
+                     {{#each video}}
+                        <option class="option" value="../{{this.video_path}}{{this.name_video}}" data-img="../{{this.poster}}">{{this.series}}</option>
+                     {{/each}}
+                  </select>
+               <button class="play">Play</button>
+            </div>
+         <div class="slider">
+            <div class="sub-slider">
+               <div class="sub-sub-slider">
+                  {{#each img}}
+                     <img src="../{{this.path}}" alt="{{this.name}}">
+                  {{/each}}
+               </div>
+            </div>
+         </div>
+   </section>
+</main>
+<script src="/script.js" defer></script>
