@@ -37,8 +37,6 @@ app.use('/auth', auth)
 const PORT = process.env.PORT || 3000
 async function start(){
    try{
-      const password = 'TDNADn7x2drfIl28'
-      const urlDB = `mongodb+srv://Thrackerzod:${password}@cluster0.dmtbx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
       await mongoose.connect(urlDB,{
          useNewUrlParser: true, 
          useUnifiedTopology: true
