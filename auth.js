@@ -1,18 +1,14 @@
 const {Router, response} = require('express')
 const User = require('../models/users')
+const {body,validationResult} = require('express-validator/check')
 const bcrypt = require('bcryptjs')
 const router = Router()
 const nodemailer = require('nodemailer')
 const regEmail = require('../email/registration')
 const resetEmail = require('../email/reset')
 const crypto = require('crypto')
-const transport = nodemailer.createTransport({
-   service: 'gmail',
-   auth: {
-     user: 'lrulcthulhu@gmail.com',
-     pass: 'ershoxbthuthqdba',
-   },
-})
+
+
 
 router.get('/login', async (req,res)=>{
    res.render('auth/login',{
@@ -20,6 +16,7 @@ router.get('/login', async (req,res)=>{
       isLogin: true,
       error: req.flash('error'),
       good: req.flash('good'),
+      registerError: req.flash('registerError')
    })
 })
 
@@ -31,8 +28,8 @@ router.get('/logout', async(req,res)=>{
 
 router.post('/login', async(req,res)=>{
    try{
-      const {login,password} = req.body
-      const candidate = await User.findOne({login})
+      const {email,password} = req.body
+      const candidate = await User.findOne({email})
 
       if(candidate){
          const areSame = await bcrypt.compare(password, candidate.password)
@@ -59,11 +56,17 @@ router.post('/login', async(req,res)=>{
 })
 
 
-router.post('/register', async(req,res) =>{
+router.post('/register',body('email').isEmail(), async(req,res) =>{
    try{
       const {login,email,password,confirm} = req.body
       const emailC = await User.findOne({email})
       const loginC = await User.findOne({login})
+
+      const errors = validationResult(req)
+      if(!errors.isEmpty()){
+         req.flash('registerError', errors.array()[0].msg)
+         return res.status(422).redirect('/auth/login')
+      }
       if(emailC){
          req.flash('error','Пользователь с таким email или login существует')
          res.redirect('/auth/login')
@@ -87,11 +90,11 @@ router.post('/register', async(req,res) =>{
 })
 
 
-router.get('/reset', (req,res)=>{
-   res.render('auth/reset'),{
+router.get('/reset', async(req,res)=>{
+   res.render('auth/reset',{
       title: 'Смена пароля',
-      error: req.flash('error')
-   }
+      error: req.flash('error'),
+   })
 })
 
 router.post('/reset', (req,res)=>{
@@ -116,6 +119,53 @@ router.post('/reset', (req,res)=>{
       })
    }catch(err){
       console.log(err)
+   }
+})
+
+
+router.get('/password/:token', async(req,res)=>{
+   if(!req.params.token){
+      return res.redirect('/auth/login')
+   }
+   try{
+   const user = await User.findOne({
+      resetToken: req.params.token,
+      resetTokenExp: {$gt: Date.now()}
+   })
+   if(!user){
+      return res.redirect('/auth/login')
+   }else{
+      res.render('auth/password',{
+      title: 'Смена пароля',
+      error: req.flash('error'),
+      userId: user._id.toString(),
+      token: req.params.token
+   })
+   }
+   }catch(e){
+      console.log(e)
+   }
+})
+
+router.post('/password', async (req,res)=>{
+   try{
+      const user = await User.findOne({
+         _id: req.body.userId,
+         resetToken: req.body.token,
+         resetTokenExp: {$gt: Date.now()}
+      })
+      if(user){
+         user.password = await bcrypt.hash(req.body.password, 10)
+         user.resetToken = undefined
+         user.resetTokenExp = undefined
+         await user.save()
+         res.redirect('/auth/login')
+      }else{
+         req.flash('loginError','Время востановления пароля закончилось')
+         res.redirect('/auth/login')
+      }
+   }catch(e){
+      console.log(e)
    }
 })
 
